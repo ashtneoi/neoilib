@@ -1,14 +1,30 @@
-pub struct FuncIter<T, F: FnMut() -> Option<T>> {
+pub fn func_iter<T, F>(f: F) -> FuncIter<T, F>
+where
+    F: FnMut() -> Option<T>,
+{
+    FuncIter::new(f)
+}
+
+pub struct FuncIter<T, F>
+where
+    F: FnMut() -> Option<T>,
+{
     f: F,
 }
 
-impl<T, F: FnMut() -> Option<T>> FuncIter<T, F> {
-    pub fn new(f: F) -> FuncIter<T, F> {
+impl<T, F> FuncIter<T, F>
+where
+    F: FnMut() -> Option<T>,
+{
+    fn new(f: F) -> FuncIter<T, F> {
         FuncIter { f }
     }
 }
 
-impl<T, F: FnMut() -> Option<T>> Iterator for FuncIter<T, F> {
+impl<T, F> Iterator for FuncIter<T, F>
+where
+    F: FnMut() -> Option<T>,
+{
     type Item = T;
 
     fn next(&mut self) -> Option<T> {
