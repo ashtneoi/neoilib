@@ -1,3 +1,6 @@
+#[cfg(test)]
+mod tests;
+
 pub fn func_iter<T, F>(f: F) -> FuncIter<T, F>
 where
     F: FnMut() -> Option<T>,
