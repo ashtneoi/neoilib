@@ -1,5 +1,5 @@
 mod func_iter_tests {
-    use func_iter;
+    use iter::func_iter;
 
     #[test]
     fn count() {
@@ -42,7 +42,7 @@ mod func_iter_tests {
 }
 
 mod peek_while_tests {
-    use peek_while;
+    use iter::peek_while;
 
     #[test]
     fn count_limit() {
