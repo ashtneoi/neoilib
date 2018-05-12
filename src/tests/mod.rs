@@ -194,8 +194,13 @@ mod link_tree_tests {
             match self {
                 &mut Node::Seq(ref mut children) =>
                     children.get_mut(idx).map(|c: &mut Self| c as *mut Self),
-                &mut Node::Name(_, ref mut child) =>
-                    Some(&mut **child as *mut Self),
+                &mut Node::Name(_, ref mut child) => {
+                    if idx == 0 {
+                        Some(&mut **child as *mut Self)
+                    } else {
+                        None
+                    }
+                },
                 &mut Node::Link(_) => None,
             }
         }
@@ -251,7 +256,7 @@ mod link_tree_tests {
         ]);
         let root = &t as *const Node;
 
-        let mut c = LinkTreeCursor::new(&mut t, "go");
+        let mut c = LinkTreeCursor::new(&mut t, "go").unwrap();
 
         for _ in 0..100 {
             assert!(ptr::eq(c.get(), root));
