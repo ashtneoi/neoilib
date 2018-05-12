@@ -68,23 +68,23 @@ mod tree_tests {
         }
     }
 
-    fn n(children: Vec<Node>) -> Node {
+    fn e(children: Vec<Node>) -> Node {
         Node { children }
     }
 
-    fn e() -> Node {
+    fn f() -> Node {
         Node { children: Vec::new() }
     }
 
     #[test]
     fn full_traverse() {
-        let mut t = n(vec![
-            n(vec![
-                e(),
-                e(),
+        let mut t = e(vec![
+            e(vec![
+                f(),
+                f(),
             ]),
-            n(vec![
-                e(),
+            e(vec![
+                f(),
             ]),
         ]);
         let root = &t as *const Node;
@@ -130,16 +130,16 @@ mod tree_tests {
 
     #[test]
     fn partial_traverse() {
-        let mut t = n(vec![
-            n(vec![
-                n(vec![
-                    e(),
+        let mut t = e(vec![
+            e(vec![
+                e(vec![
+                    f(),
                 ]),
-                e(),
+                f(),
             ]),
-            n(vec![
-                e(),
-                e(),
+            e(vec![
+                f(),
+                f(),
             ]),
         ]);
         let root = &t as *const Node;
@@ -174,6 +174,137 @@ mod tree_tests {
             assert!(c.down());
             assert!(c.up());
             assert!(c.up());
+            assert!(!c.up());
+        }
+    }
+}
+
+mod link_tree_tests {
+    use std::ptr;
+    use tree::{Down, Link, LinkTreeCursor};
+
+    enum Node {
+        Seq(Vec<Node>),
+        Name(String, Box<Node>),
+        Link(String),
+    }
+
+    impl Down for Node {
+        fn down(&mut self, idx: usize) -> Option<*mut Self> {
+            match self {
+                &mut Node::Seq(ref mut children) =>
+                    children.get_mut(idx).map(|c: &mut Self| c as *mut Self),
+                &mut Node::Name(_, ref mut child) =>
+                    Some(&mut **child as *mut Self),
+                &mut Node::Link(_) => None,
+            }
+        }
+    }
+
+    impl Link for Node {
+        fn name(&self) -> Option<&str> {
+            match self {
+                &Node::Name(ref name, _) => Some(name),
+                _ => None,
+            }
+        }
+
+        fn target(&self) -> Option<&str> {
+            match self {
+                &Node::Link(ref target) => Some(target),
+                _ => None,
+            }
+        }
+    }
+
+    fn e(children: Vec<Node>) -> Node {
+        Node::Seq(children)
+    }
+
+    fn n(name: &str, child: Node) -> Node {
+        Node::Name(name.to_string(), Box::new(child))
+    }
+
+    fn k(target: &str) -> Node {
+        Node::Link(target.to_string())
+    }
+
+    fn f() -> Node {
+        Node::Seq(Vec::new())
+    }
+
+    #[test]
+    fn full_traverse() {
+        let mut t = e(vec![
+            f(),
+            f(),
+            f(),
+            n("go", e(vec![
+                n("foo", e(vec![
+                    f(),
+                    f(),
+                ])),
+                e(vec![
+                    k("foo"),
+                ]),
+            ])),
+        ]);
+        let root = &t as *const Node;
+
+        let mut c = LinkTreeCursor::new(&mut t, "go");
+
+        for _ in 0..100 {
+            assert!(ptr::eq(c.get(), root));
+
+            assert!(c.down());
+
+            assert!(c.down());
+
+            assert!(c.down());
+
+            {
+                let here = c.get() as *const Node;
+                let here_mut = c.get_mut() as *mut Node;
+                assert!(ptr::eq(here, here_mut));
+                assert!(!ptr::eq(here, root));
+
+                assert!(c.down());
+                assert!(!ptr::eq(c.get(), here));
+                assert!(!c.down());
+                assert!(c.up());
+
+                assert!(ptr::eq(c.get(), here));
+                assert!(ptr::eq(c.get_mut(), here_mut));
+            }
+
+            assert!(c.down());
+            assert!(!c.down());
+            assert!(c.up());
+            assert!(c.up());
+            assert!(c.up());
+
+            assert!(c.down());
+
+            assert!(c.down());
+
+            assert!(c.down());
+
+            assert!(c.down());
+
+            assert!(c.down());
+            assert!(!c.down());
+            assert!(c.up());
+
+            assert!(c.down());
+            assert!(!c.down());
+            assert!(c.up());
+            assert!(c.up());
+            assert!(c.up());
+            assert!(c.up());
+            assert!(c.up());
+            assert!(c.up());
+
+            assert!(!c.down());
             assert!(!c.up());
         }
     }
