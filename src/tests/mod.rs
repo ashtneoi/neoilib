@@ -254,12 +254,11 @@ mod link_tree_tests {
                 ]),
             ])),
         ]);
-        let root = &t as *const Node;
 
         let mut c = LinkTreeCursor::new(&mut t, "go").unwrap();
 
         for _ in 0..100 {
-            assert!(ptr::eq(c.get(), root));
+            let start = c.get() as *const Node;
 
             assert!(c.down());
 
@@ -271,7 +270,7 @@ mod link_tree_tests {
                 let here = c.get() as *const Node;
                 let here_mut = c.get_mut() as *mut Node;
                 assert!(ptr::eq(here, here_mut));
-                assert!(!ptr::eq(here, root));
+                assert!(!ptr::eq(here, start));
 
                 assert!(c.down());
                 assert!(!ptr::eq(c.get(), here));
@@ -311,6 +310,8 @@ mod link_tree_tests {
 
             assert!(!c.down());
             assert!(!c.up());
+
+            assert!(ptr::eq(c.get(), start));
         }
     }
 }
