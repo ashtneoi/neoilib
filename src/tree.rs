@@ -57,6 +57,7 @@ impl<'n, N: 'n + Down> TreeCursor<'n, N> {
 type LinkMap<X> = HashMap<String, X>;
 
 // TODO: Is this overly generic?
+#[derive(Debug)]
 pub enum LinkError {
     DuplicateName,
     BrokenLink,
@@ -75,6 +76,8 @@ impl<'n, N: 'n + Down + Link> LinkTreeCursor<'n, N> {
         let mut targets = Vec::new();
 
         loop {
+            while c.down() { }
+
             let here = c.get_mut();
             if let Some(name) = match here.name() {
                     Some(n) => Some(n.to_string()),
@@ -88,7 +91,6 @@ impl<'n, N: 'n + Down + Link> LinkTreeCursor<'n, N> {
                 targets.push(target.to_string());
             }
 
-            while c.down() { }
             if !c.up() {
                 break;
             }
@@ -106,5 +108,21 @@ impl<'n, N: 'n + Down + Link> LinkTreeCursor<'n, N> {
         };
 
         Ok(Self { tree_cursor: TreeCursor::new(start_node), link_map })
+    }
+
+    pub fn get(&self) -> &'n N {
+        unimplemented!();
+    }
+
+    pub fn get_mut(&mut self) -> &'n mut N {
+        unimplemented!();
+    }
+
+    pub fn down(&mut self) -> bool {
+        unimplemented!();
+    }
+
+    pub fn up(&mut self) -> bool {
+        unimplemented!();
     }
 }
