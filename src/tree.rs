@@ -2,6 +2,7 @@ use std::collections::HashMap;
 use std::marker::PhantomData;
 
 pub trait Down {
+    // TODO: Can this take a shared ref?
     fn down(&mut self, idx: usize) -> Option<*mut Self>;
 }
 
@@ -111,18 +112,26 @@ impl<'n, N: 'n + Down + Link> LinkTreeCursor<'n, N> {
     }
 
     pub fn get(&self) -> &'n N {
-        unimplemented!();
+        self.tree_cursor.get()
     }
 
     pub fn get_mut(&mut self) -> &'n mut N {
-        unimplemented!();
+        self.tree_cursor.get_mut()
     }
 
     pub fn down(&mut self) -> bool {
-        unimplemented!();
+        match self.tree_cursor.get().target()
+                .map(|target| self.link_map[target])
+        {
+            Some(new_ptr) => {
+                self.tree_cursor.stack.push((new_ptr, 0));
+                true
+            },
+            None => self.tree_cursor.down(),
+        }
     }
 
     pub fn up(&mut self) -> bool {
-        unimplemented!();
+        self.tree_cursor.up()
     }
 }
