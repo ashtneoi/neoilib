@@ -381,4 +381,27 @@ mod link_tree_tests {
             );
         }
     }
+
+    #[test]
+    fn link_error_precedence() {
+        {
+            let mut t = n("foo", n("foo", f()));
+            assert_eq!(
+                LinkTreeCursor::new(&mut t, "bar").unwrap_err(),
+                LinkError::DuplicateName,
+            );
+        }
+
+        {
+            let mut t = e(vec![
+                n("foo", f()),
+                f(),
+                n("foo", f()),
+            ]);
+            assert_eq!(
+                LinkTreeCursor::new(&mut t, "bar").unwrap_err(),
+                LinkError::DuplicateName,
+            );
+        }
+    }
 }
