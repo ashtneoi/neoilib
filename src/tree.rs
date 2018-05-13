@@ -2,7 +2,6 @@ use std::collections::HashMap;
 use std::marker::PhantomData;
 
 pub trait Down {
-    // TODO: Can this take a shared ref?
     fn down(&mut self, idx: usize) -> Option<*mut Self>;
 }
 
