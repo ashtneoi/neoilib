@@ -393,6 +393,36 @@ mod link_tree_tests {
     }
 
     #[test]
+    fn deep_recursion() {
+        let mut t = n("foo", k("foo"));
+
+        let mut c = LinkTreeCursor::new(&mut t, "foo").unwrap();
+
+        let nn = c.get() as *const Node;
+        assert!(c.down());
+        let kk = c.get() as *const Node;
+        assert!(c.down());
+
+        for _ in 0..1000 {
+            assert!(ptr::eq(c.get(), nn));
+            assert!(c.down());
+            assert!(ptr::eq(c.get(), kk));
+            assert!(c.down());
+        }
+
+        for _ in 0..1001 {
+            assert!(ptr::eq(c.get(), nn));
+            assert!(c.up());
+            assert!(!c.down());
+            assert!(ptr::eq(c.get(), kk));
+            assert!(c.up());
+            assert!(!c.down());
+        }
+
+        assert!(!c.up());
+    }
+
+    #[test]
     fn link_errors() {
         {
             let mut t = e(vec![
