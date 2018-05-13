@@ -423,6 +423,53 @@ mod link_tree_tests {
     }
 
     #[test]
+    fn zero() {
+        let mut t = n("foo", e(vec![
+            f(),
+            f(),
+        ]));
+
+        let mut c = LinkTreeCursor::new(&mut t, "foo").unwrap();
+
+        assert!(c.down());
+
+        assert!(c.down());
+        assert!(!c.down());
+        assert!(c.up());
+
+        assert!(c.down());
+        assert!(!c.down());
+        assert!(c.up());
+
+        assert!(!c.down());
+
+        c.zero();
+
+        assert!(c.down());
+        assert!(!c.down());
+        assert!(c.up());
+
+        assert!(c.down());
+        assert!(!c.down());
+        assert!(c.up());
+
+        c.zero();
+
+        assert!(c.down());
+        assert!(!c.down());
+        assert!(c.up());
+
+        assert!(c.down());
+        assert!(!c.down());
+        assert!(c.up());
+
+        assert!(!c.down());
+
+        assert!(c.up());
+        assert!(!c.up());
+    }
+
+    #[test]
     fn link_errors() {
         {
             let mut t = e(vec![

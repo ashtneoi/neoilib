@@ -32,6 +32,10 @@ impl<'n, N: 'n + Down> TreeCursor<'n, N> {
         (unsafe { here.as_mut() }).unwrap()
     }
 
+    pub fn zero(&mut self) {
+        self.stack.last_mut().unwrap().1 = 0;
+    }
+
     pub fn down(&mut self) -> bool {
         let idx = self.stack.last().unwrap().1;
         let new_ptr = match self.get_mut().down(idx) {
@@ -117,6 +121,10 @@ impl<'n, N: 'n + Down + Link> LinkTreeCursor<'n, N> {
 
     pub fn get_mut(&mut self) -> &'n mut N {
         self.tree_cursor.get_mut()
+    }
+
+    pub fn zero(&mut self) {
+        self.tree_cursor.zero();
     }
 
     pub fn down(&mut self) -> bool {
