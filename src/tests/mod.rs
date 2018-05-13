@@ -114,6 +114,8 @@ mod tree_tests {
             assert!(c.down());
             assert!(!c.down());
             assert!(c.up());
+
+            assert!(!c.down());
             assert!(c.up());
 
             assert!(c.down());
@@ -121,6 +123,8 @@ mod tree_tests {
             assert!(c.down());
             assert!(!c.down());
             assert!(c.up());
+
+            assert!(!c.down());
             assert!(c.up());
 
             assert!(!c.down());
@@ -261,9 +265,7 @@ mod link_tree_tests {
             let start = c.get() as *const Node;
 
             assert!(c.down());
-
             assert!(c.down());
-
             assert!(c.down());
 
             {
@@ -284,17 +286,17 @@ mod link_tree_tests {
             assert!(c.down());
             assert!(!c.down());
             assert!(c.up());
+
+            assert!(!c.down());
             assert!(c.up());
+
+            assert!(!c.down());
             assert!(c.up());
 
             assert!(c.down());
-
             assert!(c.down());
-
             assert!(c.down());
-
             assert!(c.down());
-
             assert!(c.down());
             assert!(!c.down());
             assert!(c.up());
@@ -302,10 +304,20 @@ mod link_tree_tests {
             assert!(c.down());
             assert!(!c.down());
             assert!(c.up());
+
+            assert!(!c.down());
             assert!(c.up());
+
+            assert!(!c.down());
             assert!(c.up());
+
+            assert!(!c.down());
             assert!(c.up());
+
+            assert!(!c.down());
             assert!(c.up());
+
+            assert!(!c.down());
             assert!(c.up());
 
             assert!(!c.down());
