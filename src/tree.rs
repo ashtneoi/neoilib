@@ -57,7 +57,6 @@ impl<'n, N: 'n + Down> TreeCursor<'n, N> {
 
 type LinkMap<X> = HashMap<String, X>;
 
-// TODO: Is this overly generic?
 #[derive(Debug)]
 pub enum LinkError {
     DuplicateName,
