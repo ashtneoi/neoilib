@@ -181,6 +181,70 @@ mod tree_tests {
             assert!(!c.up());
         }
     }
+
+    #[test]
+    fn add_children() {
+        let mut t = e(vec![]);
+
+        let mut c = TreeCursor::new(&mut t);
+
+        for _ in 0..10 {
+            assert!(!c.down());
+
+            let here = c.get_mut();
+            here.children.push(e(vec![]));
+
+            assert!(c.down());
+        }
+
+        for _ in 0..10 {
+            assert!(!c.down());
+            assert!(c.up());
+        }
+
+        assert!(!c.up());
+    }
+
+    #[test]
+    fn remove_children() {
+        let mut t = e(vec![
+            e(vec![
+                e(vec![
+                    e(vec![
+                        e(vec![
+                            e(vec![
+                                e(vec![]),
+                            ]),
+                        ]),
+                    ]),
+                ]),
+            ]),
+        ]);
+
+        let mut c = TreeCursor::new(&mut t);
+
+        for _ in 0..6 {
+            assert!(c.down());
+        }
+        assert!(!c.down());
+        for _ in 0..6 {
+            assert!(c.up());
+        }
+        assert!(!c.up());
+
+        for i in (1..=5).rev() {
+            for _ in 0..i {
+                assert!(c.down());
+            }
+            let here = c.get_mut();
+            assert!(here.children.pop().is_some());
+            assert!(!c.down());
+            for _ in 0..i {
+                assert!(c.up());
+            }
+            assert!(!c.up());
+        }
+    }
 }
 
 mod link_tree_tests {
