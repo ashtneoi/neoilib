@@ -122,7 +122,7 @@ impl<'n, N: 'n + Down + Link> LinkTreeCursor<'n, N> {
 
     pub fn down(&mut self) -> bool {
         match self.tree_cursor.get().target()
-                .filter(|_| { self.tree_cursor.stack.last().unwrap().1 == 0 })
+                .filter(|_| self.tree_cursor.stack.last().unwrap().1 == 0)
                 .map(|target| self.link_map[target])
         {
             Some(new_ptr) => {
