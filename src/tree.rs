@@ -11,6 +11,7 @@ pub trait Link {
     fn target(&self) -> Option<&str>;
 }
 
+#[derive(Debug)]
 pub struct TreeCursor<'n, N: 'n + Down> {
     root: PhantomData<&'n mut N>,
     stack: Vec<(*mut N, usize)>,
@@ -57,12 +58,13 @@ impl<'n, N: 'n + Down> TreeCursor<'n, N> {
 
 type LinkMap<X> = HashMap<String, X>;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum LinkError {
     DuplicateName,
     BrokenLink,
 }
 
+#[derive(Debug)]
 pub struct LinkTreeCursor<'n, N: 'n + Down + Link> {
     tree_cursor: TreeCursor<'n, N>,
     link_map: LinkMap<*mut N>,

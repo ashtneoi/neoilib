@@ -185,8 +185,9 @@ mod tree_tests {
 
 mod link_tree_tests {
     use std::ptr;
-    use tree::{Down, Link, LinkTreeCursor};
+    use tree::{Down, Link, LinkError, LinkTreeCursor};
 
+    #[derive(Debug)]
     enum Node {
         Seq(Vec<Node>),
         Name(String, Box<Node>),
@@ -324,6 +325,60 @@ mod link_tree_tests {
             assert!(!c.up());
 
             assert!(ptr::eq(c.get(), start));
+        }
+    }
+
+    #[test]
+    fn link_errors() {
+        {
+            let mut t = e(vec![
+                k("foo"),
+                n("bar", f()),
+            ]);
+            assert_eq!(
+                LinkTreeCursor::new(&mut t, "bar").unwrap_err(),
+                LinkError::BrokenLink,
+            );
+        }
+
+        {
+            let mut t = e(vec![
+                n("bar", e(vec![
+                    e(vec![
+                        f(),
+                        f(),
+                        k("foo"),
+                    ]),
+                ])),
+            ]);
+            assert_eq!(
+                LinkTreeCursor::new(&mut t, "bar").unwrap_err(),
+                LinkError::BrokenLink,
+            );
+        }
+
+        {
+            let mut t = e(vec![
+                f(),
+                n("foo", n("foo", f())),
+                n("bar", f()),
+            ]);
+            assert_eq!(
+                LinkTreeCursor::new(&mut t, "foo").unwrap_err(),
+                LinkError::DuplicateName,
+            );
+            assert_eq!(
+                LinkTreeCursor::new(&mut t, "bar").unwrap_err(),
+                LinkError::DuplicateName,
+            );
+        }
+
+        {
+            let mut t = n("foo", f());
+            assert_eq!(
+                LinkTreeCursor::new(&mut t, "bar").unwrap_err(),
+                LinkError::BrokenLink,
+            );
         }
     }
 }
